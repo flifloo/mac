@@ -3,7 +3,8 @@ from sys import stderr
 from pymysql import Connect
 
 
-def insert_whmcs_ipv4(insert: [(IPv4Address, str, IPv4Address, int)], interface: str, db: Connect, debug: bool = False):
+def insert_whmcs_ipv4(insert: [(IPv4Address, str, IPv4Address, int)], interface: str, db: Connect, debug: bool = False,
+                      verbose: bool = False):
     """
     This function insert given IPs and MACs to WHMCS
 
@@ -15,6 +16,8 @@ def insert_whmcs_ipv4(insert: [(IPv4Address, str, IPv4Address, int)], interface:
     :type db: pymysql.Connect
     :param debug: Disable commit on database
     :type debug: bool
+    :param verbose: Print actions on database
+    :type verbose: bool
     """
     cursor = db.cursor()
     # Get gateway
@@ -33,12 +36,14 @@ def insert_whmcs_ipv4(insert: [(IPv4Address, str, IPv4Address, int)], interface:
     for i in insert:
         if i[1]:
             cmd = f"INSERT INTO mg_proxmox_addon_ip (ip, type, mac_address, subnet_mask, cidr, gateway, tag) " \
-                        f"VALUES ('{i[0]}', 'IPv4', {i[1]}, '{i[2]}', {i[3]}, '{gateway}', {vlan})"
+                        f"VALUES ('{i[0]}', 'IPv4', '{i[1]}', '{i[2]}', {i[3]}, '{gateway}', {vlan})"
             try:
                 cursor.execute(cmd)
             except Exception as e:
                 print(cmd, file=stderr)
                 raise e
+            if debug or verbose:
+                print(cmd)
 
     cursor.close()
 

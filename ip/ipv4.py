@@ -37,9 +37,9 @@ def ipv4(prefix: str, ipl: [IPv4Address] = None, macl: [str] = None) -> [(IPv4Ad
         mac = None
         if ip not in ipl:
             ipl.append(ip)
-            mac = str(RandMac("00:00:00:00:00:00", True))
+            mac = str(RandMac("00:00:00:00:00:00", True)).replace("'", "")
             while mac in macl:
-                mac = str(RandMac("00:00:00:00:00:00", True))
+                mac = str(RandMac("00:00:00:00:00:00", True)).replace("'", "")
             macl.append(mac)
 
         out.append((ip, mac, subnet_mask, cidr))
