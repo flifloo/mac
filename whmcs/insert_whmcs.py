@@ -21,7 +21,7 @@ def insert_whmcs_ipv4(insert: [(IPv4Address, str, IPv4Address, int)], interface:
     gateway = insert[0][0]
     del insert[0]
     # Get vlan if given
-    if interface[:5] == "vlan":
+    if interface[:4] == "vlan":
         try:
             vlan = int(interface[4:])
         except ValueError:
