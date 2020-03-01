@@ -49,4 +49,4 @@ out = ipv4(args.prefix, ipl, macl)
 
 # Insert the list
 insert_whmcs_ipv4(out, args.interface, db, debug)
-insert_router_ipv4(out, "", SSH_HOST, SSH_PORT, SSH_USER, SSH_KEY, debug)
+insert_router_ipv4(out, args.interface, SSH_HOST, SSH_PORT, SSH_USER, SSH_KEY, debug)
