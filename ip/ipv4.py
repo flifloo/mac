@@ -35,7 +35,6 @@ def ipv4(prefix: str, ipl: [IPv4Address] = None, macl: [str] = None) -> [(IPv4Ad
     # For all ip in prefix
     for ip in ips.hosts():
         mac = None
-        ip = str(ip)
         if ip not in ipl:
             ipl.append(ip)
             mac = str(RandMac("00:00:00:00:00:00", True))

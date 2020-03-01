@@ -26,10 +26,13 @@ def insert_router_ipv4(insert: [(IPv4Address, str, IPv4Address, int)], interface
 
     ipl = get_router_ipv4(host, port, user, key)
 
+    print("Start insert on router")
     for i in insert:
-        if ((i[0] not in ipl) or not (ipl[ipl.find(i[0]):5].replace(" ", ""))) and (i[1] not in ipl):
-            cmd = ["ssh", "-i", key, "-o", "StrictHostKeyChecking no", f"{user}@{host}", "-p", str(port), f"/ip arp add address={i[0]} mac-address={i[1]} interface={interface}".replace("'", "")]
-            if not debug:
-                run(cmd)
-            else:
-                print(cmd)
+        if i[1]:
+            if ((i[0] not in ipl) or not (ipl[ipl.find(i[0]):5].replace(" ", ""))) and (i[1] not in ipl):
+                cmd = ["ssh", "-i", key, "-o", "StrictHostKeyChecking no", f"{user}@{host}", "-p", str(port), f"/ip arp add address={i[0]} mac-address={i[1]} interface={interface}".replace("'", "")]
+                if not debug:
+                    run(cmd)
+                else:
+                    print(cmd)
+    print("Insert on router done")
