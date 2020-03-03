@@ -35,8 +35,8 @@ def insert_whmcs_ipv4(insert: [(IPv4Address, str, IPv4Address, int)], interface:
     # For every IP to insert
     for i in insert:
         if i[1]:
-            cmd = f"INSERT INTO mg_proxmox_addon_ip (ip, type, mac_address, subnet_mask, cidr, gateway, tag) " \
-                        f"VALUES ('{i[0]}', 'IPv4', '{i[1]}', '{i[2]}', {i[3]}, '{gateway}', {vlan})"
+            cmd = f"INSERT INTO mg_proxmox_addon_ip (ip, type, mac_address, subnet_mask, cidr, sid gateway, tag) " \
+                        f"VALUES ('{i[0]}', 'IPv4', '{i[1]}', '{i[2]}', {i[3]}, 0, '{gateway}', {vlan})"
             try:
                 cursor.execute(cmd)
             except Exception as e:
