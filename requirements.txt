@@ -1,0 +1,2 @@
+PyMySQL==0.9.3
+randmac==0.0.2
