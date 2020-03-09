@@ -13,7 +13,7 @@ rmac = re.compile(r"(?:[A-F]|[0-9]){1,3}:(?:[A-F]|[0-9]){1,3}:(?:[A-F]|[0-9]){1,
                   r"{1,3}:(?:[A-F]|[0-9]){1,3}")
 
 
-def get_router_ipv4(host: str, port: int, user: str, key: str) -> [IPv4Address]:
+def get_router_ipv4(host: str, port: int, user: str, key: str, ssh_options: list = []) -> [IPv4Address]:
     """
     Gets IPv4 list of the router
 
@@ -25,16 +25,18 @@ def get_router_ipv4(host: str, port: int, user: str, key: str) -> [IPv4Address]:
     :type port: str
     :param key: The SSH key of the router
     :type key: str
+    :param ssh_options: SSH optionals arguments
+    :type ssh_options: list
     :return: List of IPv4 in the router
     :rtype: [IPv4Address]
     """
 
-    out = run(["ssh", "-i", key, "-o", "StrictHostKeyChecking no", f"{user}@{host}", "-p", str(port), "/ip arp print"],
+    out = run(["ssh", "-i", key, "-o", "StrictHostKeyChecking no"] + ssh_options + [f"{user}@{host}", "-p", str(port), "/ip arp print"],
               stdout=PIPE).stdout.decode()
     return [IPv4Address(i) for i in ripv4.findall(out)]
 
 
-def get_router_ipv4_id(ipv4: IPv4Address, host: str, port: int, user: str, key: str) -> int:
+def get_router_ipv4_id(ipv4: IPv4Address, host: str, port: int, user: str, key: str, ssh_options: list = []) -> int:
     """
     Get IPv4 id of the router
 
@@ -48,11 +50,13 @@ def get_router_ipv4_id(ipv4: IPv4Address, host: str, port: int, user: str, key: 
     :type port: str
     :param key: The SSH key of the router
     :type key: str
+    :param ssh_options: SSH optionals arguments
+    :type ssh_options: list
     :return: List of IPv4 in the router
     :rtype: int
     """
 
-    out = run(["ssh", "-i", key, "-o", "StrictHostKeyChecking no", f"{user}@{host}", "-p", str(port), "/ip arp print"],
+    out = run(["ssh", "-i", key, "-o", "StrictHostKeyChecking no"] + ssh_options + [f"{user}@{host}", "-p", str(port), "/ip arp print"],
               stdout=PIPE).stdout.decode()
     for i in ripv4_id.findall(out):
         if i[1] == str(ipv4):
@@ -60,7 +64,7 @@ def get_router_ipv4_id(ipv4: IPv4Address, host: str, port: int, user: str, key: 
     return -1
 
 
-def get_router_ipv6(host: str, port: int, user: str, key: str) -> [IPv6Address]:
+def get_router_ipv6(host: str, port: int, user: str, key: str, ssh_options: list = []) -> [IPv6Address]:
     """
     Gets IPv6 list of the router
 
@@ -72,16 +76,18 @@ def get_router_ipv6(host: str, port: int, user: str, key: str) -> [IPv6Address]:
     :type port: str
     :param key: The SSH key of the router
     :type key: str
+    :param ssh_options: SSH optionals arguments
+    :type ssh_options: list
     :return: List of IPv6 in the router
     :rtype: [IPv6Address]
     """
 
-    out = run(["ssh", "-i", key, "-o", "StrictHostKeyChecking no", f"{user}@{host}", "-p", str(port),
+    out = run(["ssh", "-i", key, "-o", "StrictHostKeyChecking no"] + ssh_options + [f"{user}@{host}", "-p", str(port),
                "/ipv6 route print"], stdout=PIPE).stdout.decode()
     return [IPv6Address(i) for i in ripv6.findall(out)]
 
 
-def get_router_ipv6_id(ipv6: str, host: str, port: int, user: str, key: str) -> int:
+def get_router_ipv6_id(ipv6: str, host: str, port: int, user: str, key: str, ssh_options: list = []) -> int:
     """
     Get IPv6 id of the router
 
@@ -97,11 +103,13 @@ def get_router_ipv6_id(ipv6: str, host: str, port: int, user: str, key: str) -> 
     :type port: str
     :param key: The SSH key of the router
     :type key: str
+    :param ssh_options: SSH optionals arguments
+    :type ssh_options: list
     :return: The id of the given IPv6
     :rtype: int
     """
 
-    out = run(["ssh", "-i", key, "-o", "StrictHostKeyChecking no", f"{user}@{host}", "-p", str(port),
+    out = run(["ssh", "-i", key, "-o", "StrictHostKeyChecking no"] + ssh_options + [f"{user}@{host}", "-p", str(port),
                "/ipv6 route print"], stdout=PIPE).stdout.decode()
     for i in ripv6_id.findall(out):
         if i[1] == ipv6[:-5]:
@@ -109,7 +117,7 @@ def get_router_ipv6_id(ipv6: str, host: str, port: int, user: str, key: str) -> 
     return -1
 
 
-def get_router_mac(host: str, port: int, user: str, key: str) -> [str]:
+def get_router_mac(host: str, port: int, user: str, key: str, ssh_options: list = []) -> [str]:
     """
     Gets MAC list of the router
 
@@ -121,10 +129,12 @@ def get_router_mac(host: str, port: int, user: str, key: str) -> [str]:
     :type port: str
     :param key: The SSH key of the router
     :type key: str
+    :param ssh_options: SSH optionals arguments
+    :type ssh_options: list
     :return: List of MAC in the router
     :rtype: [str]
     """
 
-    out = run(["ssh", "-i", key, "-o", "StrictHostKeyChecking no", f"{user}@{host}", "-p", str(port), "/ip arp print"],
+    out = run(["ssh", "-i", key, "-o", "StrictHostKeyChecking no"] + ssh_options + [f"{user}@{host}", "-p", str(port), "/ip arp print"],
               stdout=PIPE).stdout.decode()
     return rmac.findall(out)

@@ -12,7 +12,7 @@ from ip.ipv4 import ipv4
 if not isfile("config.json"):
     with open("config.json", "w") as config:
         data = {"database": {"host": "", "user": "", "password": "", "name": ""},
-                "ssh": {"host": "", "port": 22, "user": "", "key": ""},
+                "ssh": {"host": "", "port": 22, "user": "", "key": "", "options": []},
                 "interface": {"default": ""},
                 "IPv6": {"template": ""}}
         dump(data, config)
@@ -29,6 +29,7 @@ SSH_HOST = conf["ssh"]["host"]
 SSH_PORT = conf["ssh"]["port"]
 SSH_USER = conf["ssh"]["user"]
 SSH_KEY = conf["ssh"]["key"]
+SSH_OPTIONS = conf["ssh"]["options"]
 
 IPV6_TEMPLATE = conf["IPv6"]["template"]
 
@@ -61,9 +62,9 @@ out = ipv4(args.prefix, ipl, macl)
 # Insert the list
 if not args.delete:
     insert_whmcs_ipv4(out, args.interface, db, debug, args.verbose)
-    insert_router_ipv4(out, args.interface, SSH_HOST, SSH_PORT, SSH_USER, SSH_KEY, debug, args.verbose)
-    insert_router_ipv6(out, IPV6_TEMPLATE, args.interface, SSH_HOST, SSH_PORT, SSH_USER, SSH_KEY, debug, args.verbose)
+    insert_router_ipv4(out, args.interface, SSH_HOST, SSH_PORT, SSH_USER, SSH_KEY, debug, args.verbose, SSH_OPTIONS)
+    insert_router_ipv6(out, IPV6_TEMPLATE, args.interface, SSH_HOST, SSH_PORT, SSH_USER, SSH_KEY, debug, args.verbose, SSH_OPTIONS)
 else:
     remove_whmcs_ipv4(out, db, debug, args.verbose)
-    remove_router_ipv4(out, SSH_HOST, SSH_PORT, SSH_USER, SSH_KEY, debug, args.verbose)
-    remove_router_ipv6(out, IPV6_TEMPLATE, SSH_HOST, SSH_PORT, SSH_USER, SSH_KEY, debug, args.verbose)
+    remove_router_ipv4(out, SSH_HOST, SSH_PORT, SSH_USER, SSH_KEY, debug, args.verbose, SSH_OPTIONS)
+    remove_router_ipv6(out, IPV6_TEMPLATE, SSH_HOST, SSH_PORT, SSH_USER, SSH_KEY, debug, args.verbose, SSH_OPTIONS)

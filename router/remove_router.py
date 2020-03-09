@@ -4,7 +4,7 @@ from subprocess import run
 
 
 def remove_router_ipv4(remove: [(IPv4Address, str, IPv4Address, int)], host: str, port: int, user: str,
-                       key: str, debug: bool = False, verbose: bool = False):
+                       key: str, debug: bool = False, verbose: bool = False, ssh_options: list = []):
     """
     This function remove IPv6 on the router
 
@@ -22,13 +22,15 @@ def remove_router_ipv4(remove: [(IPv4Address, str, IPv4Address, int)], host: str
     :type debug: bool
     :param verbose: Print each command on router
     :type verbose: bool
+    :param ssh_options: SSH optionals arguments
+    :type ssh_options: list
     """
 
     print("Start remove IPv4 on router")
     for i in remove:
-        id = get_router_ipv4_id(i[0], host, port, user, key)
+        id = get_router_ipv4_id(i[0], host, port, user, key, ssh_options)
         if id != -1:
-            cmd = ["ssh", "-i", key, "-o", "StrictHostKeyChecking no", f"{user}@{host}", "-p", str(port),
+            cmd = ["ssh", "-i", key, "-o", "StrictHostKeyChecking no"] + ssh_options + [f"{user}@{host}", "-p", str(port),
                    f"/ip arp remove {id}"]
             if not debug:
                 run(cmd)
@@ -40,7 +42,7 @@ def remove_router_ipv4(remove: [(IPv4Address, str, IPv4Address, int)], host: str
 
 
 def remove_router_ipv6(remove: [(IPv4Address, str, IPv4Address, int)], ipv6: str, host: str, port: int, user: str,
-                       key: str, debug: bool = False, verbose: bool = False):
+                       key: str, debug: bool = False, verbose: bool = False, ssh_options: list = []):
     """
     This function remove IPv6 on the router
 
@@ -60,14 +62,16 @@ def remove_router_ipv6(remove: [(IPv4Address, str, IPv4Address, int)], ipv6: str
     :type debug: bool
     :param verbose: Print each command on router
     :type verbose: bool
+    :param ssh_options: SSH optionals arguments
+    :type ssh_options: list
     """
 
     print("Start remove IPv6 on router")
     for i in remove:
         ip = ipv6.format(str(i[0]).split(".")[-1])
-        id = get_router_ipv6_id(ip, host, port, user, key)
+        id = get_router_ipv6_id(ip, host, port, user, key, ssh_options)
         if id != -1:
-            cmd = ["ssh", "-i", key, "-o", "StrictHostKeyChecking no", f"{user}@{host}", "-p", str(port),
+            cmd = ["ssh", "-i", key, "-o", "StrictHostKeyChecking no"] + ssh_options + [f"{user}@{host}", "-p", str(port),
                    f"/ipv6 route remove {id}"]
             if not debug:
                 run(cmd)

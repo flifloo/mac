@@ -5,7 +5,7 @@ from subprocess import run
 
 
 def insert_router_ipv4(insert: [(IPv4Address, str, IPv4Address, int)], interface: str, host: str, port: int, user: str,
-                       key: str, debug: bool = False, verbose: bool = False):
+                       key: str, debug: bool = False, verbose: bool = False, ssh_options: list = []):
     """
     This function insert IPv4 on the router
 
@@ -25,16 +25,18 @@ def insert_router_ipv4(insert: [(IPv4Address, str, IPv4Address, int)], interface
     :type debug: bool
     :param verbose: Print each command on router
     :type verbose: bool
+    :param ssh_options: SSH optionals arguments
+    :type ssh_options: list
     """
 
-    ipl = get_router_ipv4(host, port, user, key)
-    macl = get_router_mac(host, port, user, key)
+    ipl = get_router_ipv4(host, port, user, key, ssh_options)
+    macl = get_router_mac(host, port, user, key, ssh_options)
 
     print("Start insert IPv4 on router")
     for i in insert:
         if i[1]:
             if (i[0] not in ipl) and (i[1] not in macl):
-                cmd = ["ssh", "-i", key, "-o", "StrictHostKeyChecking no", f"{user}@{host}", "-p", str(port),
+                cmd = ["ssh", "-i", key, "-o", "StrictHostKeyChecking no"] + ssh_options + [f"{user}@{host}", "-p", str(port),
                        f"/ip arp add address={i[0]} mac-address={i[1]} interface={interface}"]
                 if not debug:
                     run(cmd)
@@ -44,7 +46,7 @@ def insert_router_ipv4(insert: [(IPv4Address, str, IPv4Address, int)], interface
 
 
 def insert_router_ipv6(insert: [(IPv4Address, str, IPv4Address, int)], ipv6: str, interface: str, host: str, port: int, user: str,
-                       key: str, debug: bool = False, verbose: bool = False):
+                       key: str, debug: bool = False, verbose: bool = False, ssh_options: list = []):
     """
     This function insert IPv6 on the router
 
@@ -66,6 +68,8 @@ def insert_router_ipv6(insert: [(IPv4Address, str, IPv4Address, int)], ipv6: str
     :type debug: bool
     :param verbose: Print each command on router
     :type verbose: bool
+    :param ssh_options: SSH optionals arguments
+    :type ssh_options: list
     """
 
     print("Start insert IPv6 on router")
@@ -73,7 +77,7 @@ def insert_router_ipv6(insert: [(IPv4Address, str, IPv4Address, int)], ipv6: str
         if i[1]:
             ip = ipv6.format(str(i[0]).split(".")[-1])
             gateway = link_local(i[1])
-            cmd = ["ssh", "-i", key, "-o", "StrictHostKeyChecking no", f"{user}@{host}", "-p", str(port),
+            cmd = ["ssh", "-i", key, "-o", "StrictHostKeyChecking no"] + ssh_options + [f"{user}@{host}", "-p", str(port),
                    f"/ipv6 route add dst-address={ip} gateway={gateway}%{interface}"]
             if not debug:
                 run(cmd)
